@@ -10,11 +10,12 @@ def home():
 @app.route('/upload', methods=['POST'])
 def upload():
     if 'audio_file' not in request.files:
-        return 'No file part'
+        return render_template('index.html', file_path='No file part')
     
     file = request.files['audio_file']
     if file.filename == '':
-        return 'No selected file'
+     
+        return render_template('index.html', file_path='No selected file')
     
     if file:
         file_path = os.path.join('uploads', file.filename)
