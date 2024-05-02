@@ -8,7 +8,7 @@ def home():
     return render_template('index.html')
 
 @app.route('/upload', methods=['POST'])
-def upload():
+def upload(): 
     if 'audio_file' not in request.files:
         return render_template('index.html', file_path='No file part')
     
