@@ -3,13 +3,10 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
 }
-canvas {
-    border:none;
-}
 .container {
     background-color: #fff;
     border-radius: 10px;
-    box-shadow: 0px 0px 10px 0px rgba(92, 214, 4, 0.1);
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
     padding: 4%;
     margin-top: 5%;
 }
@@ -42,7 +39,7 @@ canvas {
     height: 50%;
     border-radius: 50%;
 }
-.record-button::after, .image-button::after {
+.record-button::after {
     content: '';
     position: absolute;
     top: 85%;
@@ -54,6 +51,6 @@ canvas {
     border-radius: 50%;
     display: none;
 }
-.record-button.active::after, .image-button.active::after {
+.record-button.active::after{
     display: block;
 }
