@@ -21,6 +21,7 @@
                 <div class="mt-3">
                     <button id="recordButton" class="record-button" type="button"><i class="fas fa-microphone"></i></button>
                     <br>
+                    <canvas id="waveform" width="200" height="50"></canvas>
                     <audio id="audioElement" controls class="mt-4" style="display: none;"></audio>
                 </div>
                 <div class="mt-3">
@@ -37,5 +38,7 @@
     </div>
 
     <script src="{{url_for('static',filename='main.js')}}"></script>
+ 
+
 </body>
 </html>
