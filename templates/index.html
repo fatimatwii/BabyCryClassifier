@@ -5,34 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-     <link href="{{url_for('static',filename='style.css')}}" rel="stylesheet" />
+    <link href="{{url_for('static',filename='style.css')}}" rel="stylesheet" />
 </head>
 <body>
     <div class="container">
         <div class="row">
             <div class="col col-lg-2">
                 <img src="../static/499-4995764_infant-cartoon-child-crying-cartoon-baby-crying-png-QPMgqQ0z7-transformed.png" alt="Your Image" class="img-fluid">
-           </div>
-           <div class="col-md-auto"><br>
-            <img src="../static/istockphoto-1367611853-256x256.jpg" alt="Your Image" class="img-fluid">
-           </div>
-           <div class="col">
-            <form action="/upload" method="POST" enctype="multipart/form-data">
-                <div class="mt-3">
-                    <button id="recordButton" class="record-button" type="button"><i class="fas fa-microphone"></i></button>
-                    <br>
-                    <audio id="audioElement" controls class="mt-4" style="display: none;"></audio>
-                </div>
-                <div class="mt-3">
-                    <input type="file" name="audio_file" accept=".wav, .mp3" class="form-control-file mb-3" style="margin-top: 10%;">
-                    {% if file_path %}
-                    <input type="text" value="{{ file_path }}" readonly class="form-control mb-3">
-                    {% endif %}
-                </div>
-                <div class="mt-3">
-                    <input type="submit" value="Submit" class="btn btn-outline-danger">
-                </div>
-            </form></div>
+            </div>
+            <div class="col-md-auto"><br>
+                <img src="../static/istockphoto-1367611853-256x256.jpg" alt="Your Image" class="img-fluid">
+            </div>
+            <div class="col">
+                <form action="/upload" method="POST" enctype="multipart/form-data">
+                    <div class="mt-3">
+                        <button id="recordButton" class="record-button" type="button"><i class="fas fa-microphone"></i></button>
+                        <br>
+                        <audio id="audioElement" controls class="mt-4" style="display: none;"></audio>
+                    </div>
+                    <div class="mt-3">
+                        <input id="uploadInput" type="file" name="audio_file" accept=".wav, .mp3" class="form-control-file mb-3" style="margin-top: 10%;">
+                        {% if file_path %}
+                        <input type="text" value="{{ file_path }}" readonly class="form-control mb-3">
+                        {% endif %}
+                    </div>
+                    <div class="mt-3">
+                        <input id="uploadButton" type="submit" value="Submit" class="btn btn-outline-danger">
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
