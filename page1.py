@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, send_from_directory
 import os
+from pydub import AudioSegment
+import mimetypes
 
 app = Flask(__name__)
 
@@ -26,20 +28,27 @@ def index():
 def upload():
     global record_count
     
-    
     uploaded_audio = request.files.get('uploaded_audio')
     if uploaded_audio:
         filename = f'upload_{uploaded_audio.filename}'
         uploaded_audio.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        return render_template('index.html', file_path=filename)
+        # Convert to WAV
+        audio = AudioSegment.from_file(os.path.join(app.config['UPLOAD_FOLDER'], filename), format=mimetypes.guess_extension(uploaded_audio.content_type))
+        wav_filename = f'upload_{os.path.splitext(uploaded_audio.filename)[0]}.wav'
+        audio.export(os.path.join(app.config['UPLOAD_FOLDER'], wav_filename), format="wav")
+        return render_template('index.html', file_path=wav_filename)
     
     
     recorded_audio = request.files.get('recorded_audio')
     if recorded_audio:
         filename = f'record{record_count}.wav'
         recorded_audio.save(os.path.join(app.config['UPLOAD_FOLDER'], app.config['RECORDED_FOLDER'], filename))
+        # Convert to WAV
+        audio = AudioSegment.from_file(os.path.join(app.config['UPLOAD_FOLDER'], app.config['RECORDED_FOLDER'], filename), format=mimetypes.guess_extension(recorded_audio.content_type))
+        wav_filename = f'record{record_count}.wav'
+        audio.export(os.path.join(app.config['UPLOAD_FOLDER'], app.config['RECORDED_FOLDER'], wav_filename), format="wav")
         record_count += 1  
-        return render_template('index.html', file_path=filename)
+        return render_template('index.html', file_path=wav_filename)
     
     return render_template('index.html', file_path=None)
 
