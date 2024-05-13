@@ -3,10 +3,10 @@ import csv
 import soundfile  # You need to install this package: `pip install SoundFile`
 
 # Directory containing the .wav files
-directory = "saves/audio"
+directory = "csv"
 
 # Name of the CSV file to create
-csv_filename = "saves/csv/dataset.csv"
+csv_filename = "csv/dataset.csv"
 
 # Open the CSV file in write mode
 with open(csv_filename, 'w', newline='') as csvfile:
