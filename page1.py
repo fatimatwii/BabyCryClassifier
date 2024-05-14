@@ -46,16 +46,21 @@ def upload():
         filename = f'record{record_count}.wav'
         recorded_audio.save(os.path.join(app.config['UPLOAD_FOLDER'], app.config['RECORDED_FOLDER'], filename))
         # Convert to WAV
-        audio = AudioSegment.from_file(os.path.join(app.config['UPLOAD_FOLDER'], app.config['RECORDED_FOLDER'], filename), format="weba")
+        audio = AudioSegment.from_file(os.path.join(app.config['UPLOAD_FOLDER'], app.config['RECORDED_FOLDER'], filename))
         wav_filename = f'record{record_count}.wav'
         audio.export(os.path.join(app.config['UPLOAD_FOLDER'], app.config['RECORDED_FOLDER'], wav_filename), format="wav")
         add_recorded_to_dataset(wav_filename)
         result = process_audio(wav_filename)
         record_count += 1  
+
+        clear_csv(os.path.join(app.config['CSV_FOLDER'], 'dataset.csv'))
+        clear_csv(os.path.join(app.config['CSV_FOLDER'], 'features.csv'))
+        clear_csv(os.path.join(app.config['CSV_FOLDER'], 'normalized_data.csv'))
+        print(result)
         return render_template('index.html', file_path=wav_filename, result=result)
-    clear_csv(os.path.join(app.config['CSV_FOLDER'], 'dataset.csv'))
-    clear_csv(os.path.join(app.config['CSV_FOLDER'], 'features.csv'))
-    clear_csv(os.path.join(app.config['CSV_FOLDER'], 'normalized_data.csv'))
+    #clear_csv(os.path.join(app.config['CSV_FOLDER'], 'dataset.csv'))
+    #clear_csv(os.path.join(app.config['CSV_FOLDER'], 'features.csv'))
+    #clear_csv(os.path.join(app.config['CSV_FOLDER'], 'normalized_data.csv'))
     return render_template('index.html', file_path=None)
 
 @app.route('/download/<filename>', methods=['GET'])

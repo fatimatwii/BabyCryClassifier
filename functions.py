@@ -29,14 +29,10 @@ def add_uploaded_to_dataset(filename):
     shutil.copy(os.path.join(UPLOAD_FOLDER, filename), os.path.join(CSV_FOLDER, filename))
 
 def add_recorded_to_dataset(filename):
-    csv_file_path = os.path.join(CSV_FOLDER, 'dataset.csv')
-    with open(csv_file_path, 'a', newline='') as csvfile:
+    with open(os.path.join(CSV_FOLDER, 'dataset.csv'), 'a', newline='') as csvfile:
         csv_writer = csv.writer(csvfile)
         csv_writer.writerow([filename])
-    src_path = os.path.join(UPLOAD_FOLDER, RECORDED_FOLDER, filename)
-    dest_path = os.path.join(CSV_FOLDER, filename)
-    print(f"Copying recorded file from {src_path} to {dest_path}")  # Debugging statement
-    shutil.copy(src_path, dest_path)
+    shutil.copy(os.path.join(UPLOAD_FOLDER, RECORDED_FOLDER, filename), os.path.join(CSV_FOLDER, filename))
 
 def feature_Extraction(file_path):
     x, sample_rate = librosa.load(file_path, res_type='kaiser_fast')
@@ -125,6 +121,7 @@ def process_audio(filename):
     result = predict()
     return result
 
+
 def clear_csv(file_path):
     try:
         # Read the header from the CSV file
@@ -149,3 +146,4 @@ def clear_csv_except_header(file_path):
     except Exception as e:
         print(f"Error clearing rows in {file_path}: {e}")
         raise
+
