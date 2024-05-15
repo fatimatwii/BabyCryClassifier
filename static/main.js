@@ -35,9 +35,8 @@ navigator.mediaDevices.getUserMedia({ audio: true })
       audioElement.src = url;
       audioElement.style.display = 'block';
       
-      
       const filename = `record${recordCount}.wav`; 
-      formData.append('recorded_audio', blob, filename);
+      formData.append('audio_file', blob, filename);
       recordCount++; 
     };
   })
@@ -60,6 +59,7 @@ uploadButton.addEventListener('click', () => {
     if (response.ok) {
       console.log('Audio uploaded successfully!');
       audioElement.style.display = 'none';
+      formData = new FormData(); 
     } else {
       console.error('Error uploading audio');
     }
@@ -68,3 +68,4 @@ uploadButton.addEventListener('click', () => {
     console.error('Error uploading audio:', error);
   });
 });
+
