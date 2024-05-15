@@ -28,12 +28,6 @@ def add_uploaded_to_dataset(filename):
          csv_writer.writerow([filename])
     shutil.copy(os.path.join(UPLOAD_FOLDER, filename), os.path.join(CSV_FOLDER, filename))
 
-def add_recorded_to_dataset(filename):
-    with open(os.path.join(CSV_FOLDER, 'dataset.csv'), 'a', newline='') as csvfile:
-        csv_writer = csv.writer(csvfile)
-        csv_writer.writerow([filename])
-    shutil.copy(os.path.join(UPLOAD_FOLDER, RECORDED_FOLDER, filename), os.path.join(CSV_FOLDER, filename))
-
 def feature_Extraction(file_path):
     x, sample_rate = librosa.load(file_path, res_type='kaiser_fast')
     mfcc = np.mean(librosa.feature.mfcc(y=x, sr=sample_rate, n_mfcc=100).T, axis=0)
