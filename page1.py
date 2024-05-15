@@ -37,6 +37,7 @@ def upload():
         clear_csv(os.path.join(app.config['CSV_FOLDER'], 'normalized_data.csv'))
         clear_csv(os.path.join(app.config['CSV_FOLDER'], 'features.csv'))
         os.remove(os.path.join(app.config['CSV_FOLDER'], wav_filename))
+        print(result)
         return render_template('index.html', file_path=wav_filename, result=result)
 
     return render_template('index.html', result=result)
