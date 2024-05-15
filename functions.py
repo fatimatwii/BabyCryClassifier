@@ -10,6 +10,7 @@ import tensorflow as tf
 from pydub import AudioSegment
 
 UPLOAD_FOLDER = 'upload'
+
 CSV_FOLDER = 'features/csv'
 FEATURES_FOLDER = 'features'
 
@@ -20,12 +21,18 @@ def get_next_record_number():
         return max(record_numbers) + 1
     else:
         return 1
-
+    
 def add_uploaded_to_dataset(filename):
     with open(os.path.join(CSV_FOLDER, 'dataset.csv'), 'a', newline='') as csvfile:
          csv_writer = csv.writer(csvfile)
          csv_writer.writerow([filename])
     shutil.copy(os.path.join(UPLOAD_FOLDER, filename), os.path.join(CSV_FOLDER, filename))
+
+def add_recorded_to_dataset(filename):
+    with open(os.path.join(CSV_FOLDER, 'dataset.csv'), 'a', newline='') as csvfile:
+        csv_writer = csv.writer(csvfile)
+        csv_writer.writerow([filename])
+    shutil.copy(os.path.join(UPLOAD_FOLDER, RECORDED_FOLDER, filename), os.path.join(CSV_FOLDER, filename))
 
 def feature_Extraction(file_path):
     x, sample_rate = librosa.load(file_path, res_type='kaiser_fast')
@@ -36,22 +43,18 @@ def extract_features():
     with open(os.path.join(CSV_FOLDER, 'dataset.csv'), 'r', newline='') as csvfile:
        csv_reader = csv.reader(csvfile)
        next(csv_reader)
-       csv_filename = CSV_FOLDER + "/features.csv"
-       with open(csv_filename, 'w', newline='') as csvfile1:
-        csv_writer = csv.writer(csvfile1)
-        csv_writer.writerow([f'Feature_{i+1}' for i in range(100)])
-        for line in csv_reader:
+       for line in csv_reader:
             file_path = os.path.join(CSV_FOLDER, line[0])  
             print("Processing:", file_path)  
             try:
                 features = feature_Extraction(file_path)
                 row = features.tolist()
-                csv_writer.writerow(row)
+                return row
             except Exception as e:
                 print("Error processing:", file_path)
                 print(e)
-
-def normalize():
+    return row
+def normalize(row):
     # Initialize arrays to store min and max values for each feature column
      min_values = []
      max_values = []
@@ -64,44 +67,39 @@ def normalize():
         min_val = float(line[1])  # Convert to float
         max_val = float(line[2])  # Convert to float
         min_values.append(min_val)
-        max_values.append(max_val)   
-
-     # Read the CSV file
-     df = pd.read_csv(CSV_FOLDER+"/features.csv")
-
-     # Extract the feature columns (excluding the 'type' column)
-     feature_columns = df.columns
-
-    # Normalize the feature columns between 0 and 1 using the min and max values
-     for i, col in enumerate(feature_columns):
-       df[col] = (df[col] - min_values[i]) / (max_values[i] - min_values[i])
-     duplicated_df = pd.concat([df, df])  
-     # Save the normalized data back to a CSV file
-     duplicated_df.to_csv(CSV_FOLDER+"/normalized_data.csv", index=False)   
+        max_values.append(max_val)  
+     row1=[]
+     
+         # Normalize the feature columns between 0 and 1 using the min and max values
+     for i in range(len(row)):
+        normalized_val = (row[i] - min_values[i]) / (max_values[i] - min_values[i])
+        row1.append(normalized_val)
+     return row1 
      
 
-def decode(line):
-     match line:
-                case 1:
-                    return 'Belly Pain'
-                    
-                case 2:
-                    return 'Burping'
-                    
-                case 3:
-                    return 'Discomfort'
-                    
-                case 4:
-                    return 'Hungry'
-                    
-                case 5:
-                    return 'Tired' 
+def decode(labels):
+    decoded_labels = []
+    for label in labels:
+        if label == 1:
+            decoded_labels.append('belly_pain')
+        elif label == 2:
+            decoded_labels.append('burping')
+        elif label == 3:
+            decoded_labels.append('discomfort')
+        elif label == 4:
+            decoded_labels.append('hungry')
+        elif label == 5:
+            decoded_labels.append('tired')
+        else:
+            decoded_labels.append('unknown')
+    return decoded_labels
 
-def predict():
+
+def predict(norm):
     loaded_model = tf.keras.models.load_model('features/my_model.h5')
 # Assuming you have new_data that is preprocessed and normalized between 0 and 1
-    new_data = pd.read_csv("features/csv/normalized_data.csv",skiprows=1)
-    data_array = new_data.values
+    
+    data_array = np.vstack([norm, norm])
 # Use the loaded model to make predictions on the new data
     predictions = loaded_model.predict(data_array)
     predicted_labels = np.argmax(predictions, axis=1)+1
@@ -109,9 +107,9 @@ def predict():
     return x
 
 def process_audio(filename):
-    extract_features()
-    normalize()
-    result = predict()
+    row = extract_features()
+    norm= normalize(row)
+    result = predict(norm)
     return result
 
 
@@ -139,3 +137,4 @@ def clear_csv_except_header(file_path):
     except Exception as e:
         print(f"Error clearing rows in {file_path}: {e}")
         raise
+
