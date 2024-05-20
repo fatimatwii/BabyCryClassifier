@@ -1,11 +1,12 @@
 const recordButton = document.getElementById('recordButton');
 const audioElement = document.getElementById('audioElement');
 const uploadInput = document.getElementById('uploadInput');
+const uploadButton = document.getElementById('uploadButton');
+const predictionElement = document.getElementById('prediction');  // Element to display the prediction
 
 let isRecording = false;
 let chunks = [];
 let formData = new FormData();
-
 let recordCount = 1; 
 
 navigator.mediaDevices.getUserMedia({ audio: true })
@@ -38,6 +39,9 @@ navigator.mediaDevices.getUserMedia({ audio: true })
       const filename = `record${recordCount}.wav`; 
       formData.append('audio_file', blob, filename);
       recordCount++; 
+
+      // Automatically upload the recorded audio after stopping
+      uploadAudio();
     };
   })
   .catch(error => {
@@ -49,15 +53,21 @@ uploadInput.addEventListener('change', () => {
   formData.append('uploaded_audio', file);
 });
 
-const uploadButton = document.getElementById('uploadButton');
 uploadButton.addEventListener('click', () => {
+  uploadAudio();
+});
+
+function uploadAudio() {
   fetch('/upload', {
     method: 'POST',
     body: formData
   })
-  .then(response => {
-    if (response.ok) {
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
       console.log('Audio uploaded successfully!');
+      predictionElement.innerText = data.prediction;  // Display the prediction
+      predictionElement.style.display = 'block';
       audioElement.style.display = 'none';
       formData = new FormData(); 
     } else {
@@ -67,5 +77,4 @@ uploadButton.addEventListener('click', () => {
   .catch(error => {
     console.error('Error uploading audio:', error);
   });
-});
-
+}
